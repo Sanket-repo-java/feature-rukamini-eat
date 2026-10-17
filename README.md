@@ -1,2 +1,2 @@
-# feature-rukamini-eat
-add the food app for future
+# POC-Reference
+Create the repo for POC purpose
