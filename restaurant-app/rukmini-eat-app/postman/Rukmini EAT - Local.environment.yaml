@@ -1,0 +1,38 @@
+name: Rukmini EAT - Local
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080/rukmini-eat'
+  - key: customerEmail
+    value: demo@rukmini.com
+  - key: customerPassword
+    value: Demo@123
+  - key: adminEmail
+    value: admin@rukmini.com
+  - key: adminPassword
+    value: Admin@123
+  - key: registerName
+    value: Postman Customer
+  - key: registerEmail
+    value: postman-customer@example.test
+  - key: registerPassword
+    value: Postman@123
+  - key: query
+    value: ''
+  - key: cuisine
+    value: ''
+  - key: vegOnly
+    value: 'false'
+  - key: topRated
+    value: 'false'
+  - key: fast
+    value: 'false'
+  - key: sort
+    value: relevance
+  - key: newRestaurantName
+    value: Postman Kitchen
+  - key: newRestaurantCuisines
+    value: 'Indian,Street Food'
+  - key: newMenuItemName
+    value: Postman Special
+  - key: newMenuItemCategory
+    value: Mains

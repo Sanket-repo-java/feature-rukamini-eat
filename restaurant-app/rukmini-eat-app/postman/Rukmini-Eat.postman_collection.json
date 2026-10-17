@@ -1,0 +1,262 @@
+{
+  "info": {
+    "name": "Rukmini EAT API",
+    "description": "Postman requests for every Rukmini EAT backend endpoint. Import and select the included local environment. Customer flow: login, search restaurants, get restaurant details, place an order, then view order history. Admin flow: admin login, create a restaurant, then add a menu item.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{customerToken}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register customer",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{registerName}}\",\n  \"email\": \"{{registerEmail}}\",\n  \"password\": \"{{registerPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Created customer', function () { pm.response.to.have.status(201); });",
+                "if (pm.response.code === 201) { pm.collectionVariables.set('customerToken', pm.response.json().token); }"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Login as customer",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{customerPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Customer login successful', function () { pm.response.to.have.status(200); });",
+                "if (pm.response.code === 200) { pm.collectionVariables.set('customerToken', pm.response.json().token); }"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Login as admin",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Admin login successful', function () { pm.response.to.have.status(200); });",
+                "if (pm.response.code === 200) { pm.collectionVariables.set('adminToken', pm.response.json().token); }"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Restaurants",
+      "item": [
+        {
+          "name": "Search restaurants",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/restaurants?q={{query}}&cuisine={{cuisine}}&vegOnly={{vegOnly}}&topRated={{topRated}}&fast={{fast}}&sort={{sort}}"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Restaurant search successful', function () { pm.response.to.have.status(200); });",
+                "if (pm.response.code === 200) { const restaurants = pm.response.json(); if (restaurants.length) { pm.collectionVariables.set('restaurantId', restaurants[0].id); } }"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Get restaurant details",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/restaurants/{{restaurantId}}"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Restaurant details successful', function () { pm.response.to.have.status(200); });",
+                "if (pm.response.code === 200) { const restaurant = pm.response.json(); if (restaurant.menu && restaurant.menu.length) { pm.collectionVariables.set('menuItemId', restaurant.menu[0].id); } }"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Place order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"menuItemId\": {{menuItemId}},\n      \"quantity\": 1\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/orders"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Order created', function () { pm.response.to.have.status(201); });",
+                "if (pm.response.code === 201) { pm.collectionVariables.set('orderId', pm.response.json().id); }"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Get my order history",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Order history successful', function () { pm.response.to.have.status(200); });"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "Create restaurant",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{newRestaurantName}}\",\n  \"cuisines\": \"{{newRestaurantCuisines}}\",\n  \"rating\": 4.5,\n  \"etaMinutes\": 30,\n  \"costForTwo\": 500,\n  \"pureVeg\": false,\n  \"emoji\": \"\",\n  \"description\": \"Created from the Rukmini EAT Postman collection.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/admin/restaurants"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Restaurant created by admin', function () { pm.response.to.have.status(201); });",
+                "if (pm.response.code === 201) { pm.collectionVariables.set('adminRestaurantId', pm.response.json().id); }"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Add menu item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{newMenuItemName}}\",\n  \"category\": \"{{newMenuItemCategory}}\",\n  \"price\": 149,\n  \"veg\": true,\n  \"bestseller\": false,\n  \"emoji\": \"\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/api/admin/restaurants/{{adminRestaurantId}}/menu-items"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Menu item created by admin', function () { pm.response.to.have.status(201); });",
+                "if (pm.response.code === 201) { pm.collectionVariables.set('adminMenuItemId', pm.response.json().id); }"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Integrations",
+      "item": [
+        {
+          "name": "Get provider readiness status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/integrations/providers"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Provider readiness status successful', function () { pm.response.to.have.status(200); });",
+                "if (pm.response.code === 200) { pm.test('Providers are reported as not live', function () { pm.response.json().forEach(function (provider) { pm.expect(provider.liveData).to.eql(false); pm.expect(provider.realOrdering).to.eql(false); }); }); }"
+              ]
+            }
+          }]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/rukmini-eat" },
+    { "key": "customerToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "restaurantId", "value": "" },
+    { "key": "menuItemId", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "adminRestaurantId", "value": "" },
+    { "key": "adminMenuItemId", "value": "" }
+  ]
+}
