@@ -1,0 +1,77 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Rukmini Eat: backend",
+      "type": "shell",
+      "command": "mvn",
+      "args": [
+        "-f",
+        "feature-rukamini-eat/restaurant-app/rukmini-eat-app/rukmini-eat-backend/pom.xml",
+        "spring-boot:run",
+        "-Dspring-boot.run.profiles=local"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "group": "rukmini-eat"
+      }
+    },
+    {
+      "label": "Rukmini Eat: Angular frontend",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": [
+        "--prefix",
+        "feature-rukamini-eat/restaurant-app/rukmini-eat-app/rukmini-eat-frontend",
+        "start"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "group": "rukmini-eat"
+      }
+    },
+    {
+      "label": "Rukmini Eat: standalone prototype",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "-m",
+        "http.server",
+        "4300",
+        "--bind",
+        "127.0.0.1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/feature-rukamini-eat/restaurant-app/restaurant-prototype"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "group": "rukmini-eat"
+      }
+    }
+  ]
+}
